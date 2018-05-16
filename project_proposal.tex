@@ -1,0 +1,70 @@
+% - feedback control
+%     - counting bounces
+%     - placement / types of laser beams
+%         - synthesizing minimal placement?
+%     - colored walls (similar to "type of laser beam")
+%     - pebble
+%     - more classifications of environments: monotone, etc
+\documentclass{article}
+\usepackage[margin=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath,amsthm, amsfonts}
+
+\usepackage{url}
+ 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+ 
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+ 
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\qedsymbol{$\blacksquare$}
+
+\begin{document}
+
+\begin{centering}
+\large{CS 598 Project Proposal \\ Alli Nilles, Yingying Ren \\ \today \\}
+\end{centering}
+
+\section{Background}
+
+We consider robot systems with a simple motion model: the robot will move in straight line until encountering the boundary of the environment, when it will make a move depending on its "bounce laws" and sensing models. Then the robot repeats this procedure indefinitely, or until some condition is met and it switches to a different bouncing strategy.
+
+\section{Project Goals}
+
+In general, our approach will be to consider several different problem formulations, by varying the sensor suite of the robot and its environment and task. For each formulation, we will investigate information space representations and mappings to control policies, with the aim of discovering fundamental properties of each robot model (such as its ability, or inability, to complete a given task).
+
+\subsection{Sensor Models}
+
+We have several different practically-motivated sensor models to consider. We may also consider combinations of these sensors on the same robot.
+
+\begin{itemize}[noitemsep]
+    \item \emph{bounce detector} - a binary sensor which reports when the robot has collided with a wall. This may be implemented by a proximity detector, an IMU, etc. This will likely be combined with a counter in the robot's internal state.
+    \item \emph{laser beams} - straight lines in the interior of the polygon, which begin and end at points on the boundary. These may be (non)directional, (non)distinguishable, or (non)disjoint.
+    \item \emph{colored walls} - in addition to being able to detect a collision with the environment boundary, we may give each wall a detectable color, such that between 1 and $n$ colors can be used for the walls of an $n$-sided polygon.
+    \item \emph{pebble} - a identifiable marker that the robot may pick up and place down. We will assume the pebble is detectable from within some nonzero radius.
+\end{itemize}
+
+\subsection{Environments}
+
+The environments in this project will be bounded polygons in 2D. We will investigate 2D polygons in different categories such as convex polygons, monotone polygons, non-convex polygons, non-connected polygons, etc. Note that some of these categories are subsets of each other (convex $\subset$ monotone $\subset$ simple).
+
+In particular, we are interested in polygons approximating office environments, such as a square containing a collections of horizontal or vertical line segments as part of its boundary.
+
+\subsection{Tasks}
+
+\begin{itemize}[noitemsep]
+    \item \emph{coverage} - given a map of the environment and a starting set, the control policy guarantees that the robot will "cover" the entire interior of the environment. This condition may be modified to be coverage of the environment boundary. It will be helpful to assume that the robot has some nonzero radius, and covers everything within this radius.
+    \item \emph{localization} - given a map of the environment, and no knowledge of its initial position, the control policy will reduce uncertainty in the robot's position to below some threshold.
+    \item \emph{navigation} - given a start and goal set, the control policy will navigate the robot from the start to the goal.
+\end{itemize}
+% We want to parameterize the bouncing robot's information space by different sensor models and environments and analyze the robot's computational power using the information space. With those knowledge, we can then design robots for the tasks listed above.
+\end{document}

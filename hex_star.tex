@@ -1,0 +1,72 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{amssymb,amsmath,amsthm, amsfonts}
+
+\usepackage{url}
+ 
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollary}{Corollary}[theorem]
+ 
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+ 
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+
+\renewcommand\qedsymbol{$\blacksquare$}
+
+\title{A first study on the behavior of $f(x) = 2(\frac{3}{2}^{i}-1), i = \floor{\log_{\frac{3}{2}}\frac{1}{x}}$}
+\author{Yingying Ren}
+\date{March 2018}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+This iterative function describes the dynamical system created by a robot bouncing at $\frac{\pi}{6}$ with respect to the normal in the ``Ninja Star'' environment as shown in Figure~\ref{fig:hex_star}.
+\begin{figure}[h]
+\includegraphics[width=0.3\textwidth]{images/hex_star.jpeg}
+\centering
+\caption{A simulation of the robot bouncing at $\frac{\pi}{6}$ $w.r.t$ the normal in the ``Ninja Star'' environment.}\label{fig:hex_star}
+\centering
+\end{figure}
+
+\section{Formal definition of the function}
+The iterative function can be defined formally as the following mapping:
+\begin{gather*}
+h:\{x\in (0, 1)| x\not = (\frac{2}{3})^i, \forall i \in \mathbb{N}\} \rightarrow
+\{x\in (0, 1)| x\not = (\frac{2}{3})^i, \forall i \in \mathbb{N}\}^{\infty}\\
+ x\mapsto (x_0, x_1, x_2 \ldots)\\
+\end{gather*}
+produced by the rule 
+\begin{gather*}
+x_0=x\\
+\forall n\geq 0, x_{n+1} = 
+\begin{cases} 
+  \frac{3}{2}x_n & 0< x <\frac{2}{3} \\
+  2(\frac{3}{2}x_n-1) & \frac{2}{3}< x<1
+\end{cases}\\
+\end{gather*}
+% need to discuss the domain
+\begin{theorem}
+This function is chaotic for all $x$ with a finite binary expansion.
+\end{theorem}
+\begin{proof}
+Consider this problem using base 2. Let $\delta(y)$ represents the number of digits after the binary point of the binary expansion of $y$. If $x_n\in (0, \frac{2}{3})$, then $x_{n+1}<1$. Moreover, suppose $\delta(x_{n}) = k$ has $k$. $x_{n+1} = \frac{3}{2}x_n = x_n+\frac{1}{2}x_n$. $\frac{1}{2}x_n$ is obtained by shifting the binary point of $x_n$ one bit to the left, and thus its binary expansion has $k+1$ digits after the binary point. Therefore, when we add $x_n$ and $\frac{1}{2}x_n$ to get $x_{n+1}$, $x_{n+1}$ also have a binary expansion with $k+1$ digits after the binary point, or $\delta(x_{n+1}) = k+1$
+
+On the other hand, if $x_n\in(\frac{2}{3}, 1)$, we will first add $x_n$ and $\frac{1}{2}x_n$ to obtain a number whose binary expansion has $k+1$ digits after the binary point, then we change the digit before the binary point from 0 to 1 by the ``$-1$ operation''. We get $x_{n+1}$ by multiplying that number by two, which is obtained by shifting the binary point one bit to the right. So $x_{n+1}$ will also have a binary expansion with $k$ digits after the binary point, or $x_{n+1} = k$. However, we can show in this case that $x_n>x_{n+1}$ always holds. Given $x_n<1$, we have 
+\begin{eqnarray*}
+2x_n-2&&<0\\
+3x_n-2&&<x_n\\
+2(\frac{3}{2}x_n-1)&&<x_n\\
+x_{n+1}&&<x_n
+\end{eqnarray*}
+Therefore, we have shown that for any $x_i$, $x_j$ where $i<j, i\in \mathbb{N}, j\in \mathbb{N}$, either $\delta(x_i)<\delta(x_j)$ or $\delta(x_i) = \delta(x_j)$ but $x_i<x_j$, and thus $x_i\not = x_j$ always holds. 
+\end{proof}
+\end{document}
