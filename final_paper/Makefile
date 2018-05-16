@@ -5,3 +5,4 @@ all: \
 	pdflatex $<
 	bibtex $*
 	pdflatex $<
+	pdflatex $<
