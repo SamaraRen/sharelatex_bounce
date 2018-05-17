@@ -118,8 +118,18 @@ the same complexity as our proposed data structure, but our method can also
 achieve navigation without hand-crafted local planners due to the
 visibility-based decomposition of the environment boundary.
 
-In \cite{alam2017minimalist} and \cite{alam2018space}, the authors describe navigation, coverage, and localization algorithms for a robot with a clock and contact sensor that is capable of performing relative angle bounces. Their approach uses a discretization of the robot configuration space and actuation space, then searches the discretized dynamical system for limit cycles. The algorithm is complete and correct up to discretization error - periodic trajectories may exist which require bounce angles not allowed by the discretization. Our work is very similar in spirit to this approach, however, we use a more natural discretization induced by the environment geometry and consider all possible bounce strategies in our combinatorial representation. Our representation may be reduced to one which can be used to solve the same problems as this work, by applying constraints on the types of bounces allowed.
-
+In \cite{alam2017minimalist} and \cite{alam2018space}, the authors describe
+navigation, coverage, and localization algorithms for a robot with a clock and
+contact sensor that is capable of performing relative angle bounces. Their
+approach uses a discretization of the robot configuration space and actuation
+space, then searches the discretized dynamical system for limit cycles. The
+algorithm is complete and correct up to discretization error - periodic
+trajectories may exist which require bounce angles not allowed by the
+discretization. Our work is very similar in spirit to this approach, however, we
+use a more natural discretization induced by the environment geometry and
+consider all possible bounce strategies in our combinatorial representation. Our
+representation may be reduced to one which can be used to solve the same
+problems as this work, by applying constraints on the types of bounces allowed.
 
 
 \section{Combinatorial Visibility Data Structures}
@@ -149,12 +159,11 @@ Fig \ref{fig:veg} shows an example for vertex-edge visibility graph.
 \begin{subfigure}{0.25\textwidth}
   \includegraphics[width=0.6\linewidth]{images/concave_pent.png}
   \label{fig:c_p}
-\end{subfigure}
+\end{subfigure}%
 \begin{subfigure}{0.25\textwidth}
   \includegraphics[width=0.8\linewidth]{images/viz_edge_graph.png}
 \end{subfigure}
-\caption{The vertex-edge visibility graph for the polygon in Fig
-\ref{fig:c_p}\label{fig:veg}}
+\caption{A polygon and its corresponding vertex-edge visibility graph.\label{fig:veg}}
 
 \end{figure}
 
@@ -186,7 +195,7 @@ robot gains or loses edges if the robot were sliding along the boundary.
 
 The link distance between two vertices in a polygon is the minimum number of line segments inside the polygon connecting the two vertices. The link distance between visible vertices is $1$. In Fig~\ref{fig:link_dis}, the link distance between $v_1$ and $v_2$ is 3.
 
-The link diagram, as introduced in \cite{tan_sweep}, displays the link distance between any two points on the boundary of the polygon. \textcolor{red}{Do we need to create our own picture for link diagram here} The link diagram is our main motivation for creating a visibility diagram augmented with bouncing information.
+The link diagram, as introduced in \cite{tan_sweep}, displays the link distance between any two points on the boundary of the polygon. The link diagram is our main motivation for creating a visibility diagram augmented with bouncing information.
 \begin{figure}
     \includegraphics[width=0.6\linewidth]{images/link_distance.png}
     \centering
@@ -235,15 +244,14 @@ Fig \ref{fig:bvd} shows an example of the bounce visibility diagram.
 \begin{subfigure}{0.25\textwidth}
 \centering
 \includegraphics[width=0.7\linewidth]{images/color_pent.png}
-\label{fig:color_pent}
+\captionof{figure}{\label{fig:color_pent}}
 \end{subfigure}%
 \begin{subfigure}{0.25\textwidth}
 \centering
 \includegraphics[width=0.8\linewidth]{images/bvd.png}
 \end{subfigure}
-\caption{The bounce visibility diagram for the polygon shown in Fig~\ref{fig:color_pent}. }
+\caption{A polygon and its corresponding bounce visibility diagram.}
 \label{fig:bvd}
-
 \end{figure}
 
 
@@ -258,44 +266,17 @@ Circular symmetries in a polygon can be reflected in the periodic structure of t
 \begin{subfigure}{0.25\textwidth}
 \centering
 \includegraphics[width=0.5\linewidth]{images/regular_pent.png}
-\end{subfigure}
+\end{subfigure}%
 \begin{subfigure}{0.25\textwidth}
+\centering
 \includegraphics[width=0.8\linewidth]{images/regular_pent_bvd.png}
 \end{subfigure}
-\centering
 % }\\
 \caption{The bounce visibility diagram for the regular pentagon. }
 \label{fig:regular_pent_bvd}
 \end{figure}
 
 
-We can easily extract information for the fixed angle bouncing strategy
-mentioned in section \ref{subsec:bounce_strategy} by overlaying an horizontal
-line $\theta = \theta_0$ onto the BVD, where $\theta_0$ is the angle chosen by
-the bouncing strategy. In Fig \ref{fig:limit_cycle_bvd}, one of the possible
-limit cycle with fixed angle $\theta = 0.6$ for the concave quadrilateral is
-shown in Fig \ref{fig:limit_cycle}; the bounce visibility diagram for this
-polygon is shown in Fig \ref{fig:concave_quad_bvd} with the horizontal line
-$\theta = \theta_0$, where $\theta_0 = \frac{\pi}{2}-0.6$ (we need to convert
-the angle from w.r.t the normal of the wall to w.r.t the forward direction of
-the robot). The horizontal line cut through different regions of the diagram,
-representing the possible edges that the robot can bounce to at different points
-on the boundary with bounce angle $\theta_0$. For example, at edge $v_5v_0$, the
-robot can bounce to edge $v_0v_1$ and $v_1v_2$. We can create a graph for
-$\theta = \theta_0$, whose nodes are edges in $P'$ and two nodes are connected
-by a directed edge if the robot can bounce from one edge to another at
-$\theta_0$, as shown in Fig \ref{fig:limit_cycle_diagram}. It is more stable
-for the robot to bounce to some edges than others. In the diagram
-(Fig \ref{fig:concave_quad_bvd}), the line $\theta = \theta_0$ cuts through
-four different regions for $x \in (2, 3)$, but the sections for $v_4v_5$ and
-$v_0v_5$ are much larger than those for $v_0v_1$ and $v_1v_2$. So we know it is
-more likely and more stable for the robot to bounce to edge $v_4v_5$ and
-$v_0v_5$. We marked the edge with unstable bounce in the graph with $\omega$ in
-Fig \ref{fig:limit_cycle_diagram}. The limit cycle shown in
-Fig \ref{fig:limit_cycle} corresponds to the cycle
-$v_0v_1\rightarrow v_3v_4\rightarrow v_4v_5 \rightarrow v_1v_2 \rightarrow v_2v_3 \rightarrow v_0v_5 \rightarrow v_0v_1$
-in Fig \ref{fig:limit_cycle_diagram}.
-(\textcolor{red}{do we talk about this here or later in the task})
 
 \begin{figure}
 \centering
@@ -377,7 +358,7 @@ vertices in the partial local sequences. % show the diagram to edge
 % \item Big O complexity of construction, and size of resulting graph
 
 
-\section{BVD as an Information Space}
+\section{BVD as an Information Space \label{bvd_info}}
 
 Information spaces \cite{tovar2005information} are a useful formalism for
 reasoning about the information available to a robot as a result of its sensor
@@ -414,6 +395,8 @@ by rotating the source edge to the x axis without loss of generality.}\label{fig
     \centering
 \end{figure}
 
+\subsection{Augmenting the Graph with Dynamical Information}
+
 We can also add information to the edges in $G_{BVD}$ indicating whether the
 mapping from one edge to another is a \emph{contraction mapping}: a transition
 which will bring two separate points in the domain closer together in the range,
@@ -442,6 +425,11 @@ closer together). Thus, whenever $\frac{\sin(\theta - \phi)}{\sin(\pi-\theta)}
 v_{j+1}$ can be labelled as such, with the range of $\theta$ which makes this
 condition true.
 
+Furthermore, the contraction property of a composition of multiple bounces can
+be determined by simply multiplying the coefficients $\frac{\sin(\theta_i -
+\phi_i)}{\sin(\pi-\theta_i)}$, and the constraints on the satisfying angles
+$\theta_i$ can be propagated through the composition.
+
 \begin{figure}
     \includegraphics[width=0.8\linewidth]{images/contraction_map_cond.png}
     \centering
@@ -449,12 +437,33 @@ condition true.
     \centering
 \end{figure}
 
-\subsection{Augmenting the Diagram with Dynamical Information}
+\subsection{Sensor Modelling}
+
+Here we sketch how different virtual sensors may be incorporated into this
+information space representation.
 
 \begin{itemize}
-\item Laser Beams - laser beams form new, internal edges of the polygon. They can be added to the bounce visibility graph by marking all the edges which represent bounces that would cross the laser beam with a special symbol. different symbols for distinguishable beams. If beam is encountered, only propagate state estimate forward along edges with that symbol. To guarantee reduction in uncertainty, put laser beams in positions that break graph symmetry {\color{red} flesh out this idea}
-\item Pebbles
-\item Cameras
+\item \emph{Laser Beams:} laser beams form new, internal edges of the polygon. They can be
+added to the bounce visibility graph by marking all the edges which represent
+bounces that would cross the laser beam with a special symbol. different symbols
+for distinguishable beams. If a beam is encountered, and we are tracking state
+as a set of possible segments along the boundary of $P'$, we can reduce
+uncertainty in our estimate by only propagating the state estimate
+forward along edges with that symbol. To engineer reduction in uncertainty,
+we may be able to put laser beams in positions that break graph symmetry.
+\item \emph{Pebbles:} pebbles are quite important in many robotic tasks, such as
+when we need to guarantee that a wall-following strategy has successfully
+circumnavigated a polygon. In this representation, we can simply augment nodes
+in $G_{BVE}$ if our robot has placed a pebble in that segment (or we may mark
+multiple nodes, then use actions to reduce uncertainty in our state estimate
+once we return to the pebble).
+\item \emph{Cameras:} Especially when discussing coverage, it is helpful to have
+some sense of how we "cover" a polygon's interior. One abstract sensor with this
+behavior is a model of a camera, which may have some given range and field of
+view. The set-theoretic representation of this visibility region can be used to
+represent how much of the polygon may be covered by a given trajectory. Ideally,
+coverage strategies would allow for satisfying coverage given nondeterminism in
+the start states and actions.
 \end{itemize}
 
 \section{Task Formulation}
@@ -478,7 +487,10 @@ If the start set $S$ is such that it is equal to one of the equivalence
 classes of the data structure, a navigation query is simple - the start set in
 the graph is a single node, and the query is solved by a shortest path from this
 node to the nodes representing the goal set. The shortest path will correspond
-to the navigation strategy with the fewest number of bounces.
+to the navigation strategy with the fewest number of bounces. It would also be
+possible to determine the shortest path in the metric space of the polygonal
+environment, either by adding weights to the edges in the graph, or by
+leveraging results from shortest path navigation using visibility diagrams.
 
 It may be
 interesting to instead look to solve the navigation problem with different
@@ -498,36 +510,105 @@ class (segment along the new polygon $P'$) to another.
 
 \subsection{Patrolling \label{patrol}}
 
-In prior work {\color{red} cite}, it was shown that stable limit cycles exist for fixed bouncing in regular polygons, for some ranges of bounce angles. These results also hold for convex polygons in general.
+We define the \emph{patrolling} task as:
 
-- sketch main idea: contraction mapping from one edge back to itself -> fixed point on edge -> limit cycle
+\begin{quotation}
+Given an accurate map of the environment, a set of possible starting states, and
+a sequence of edges of the environment,
+determine a strategy which causes the robot to visit each edge of the sequence
+in order on a repeatable path.
+\end{quotation}
 
-What about nonconvex polygons?
+This task is related to the Aquarium Keeper's Problem in computational
+geometry \cite{czyzowicz1991aquarium}.
 
-- easy case: choose subset of edges that, if extended to their intersections, form convex polyon
+In prior work \cite{nilles2017periodic}, it was shown that stable limit cycles
+exist for constant-angle fixed bouncing in regular polygons, for some ranges of bounce angles.
+These results also hold for convex polygons in general.
 
-- harder case: choose periodic sequence of sequentially visible edges
+The general flavor of these results are that the bounce functions from edge to
+edge are composed into one function which returns the robot to its starting
+edge. If this function is a contraction map, a fixed point exists on the
+starting edge, and thus a limit cycle of the robot's trajectory exists. The
+exact conditions of the existence of this limit cycle depend on the product of
+the contraction coefficients being less than one; and on $\theta$ being such
+that the bounce at each stage can actually occur. All of the information
+necessary to check these conditions is in $G_{BVD}$, as described in Section
+\ref{bvd_info}.
 
-- trickiness of composing functions: range of angles which lead to limit cycle must be supported by every range/domain along compositional chain
+Thus, finding all possible limit cycles in an environment $P$ amounts to finding
+all cycles in $G_{BVD}$ such that this condition holds.
 
-- complexity of this search: all cycles in graph?
+To examine the behavior of a robot with a given fixed bounce angle, such as the
+analysis in \cite{erickson2013toward}, we can easily extract information for the fixed angle bouncing strategy
+mentioned in section \ref{subsec:bounce_strategy} by overlaying an horizontal
+line $\theta = \theta_0$ onto the BVD, where $\theta_0$ is the angle chosen by
+the bouncing strategy. In Fig \ref{fig:limit_cycle_bvd}, one of the possible
+limit cycle with fixed angle $\theta = 0.6$ for the concave quadrilateral is
+shown in Fig \ref{fig:limit_cycle}; the bounce visibility diagram for this
+polygon is shown in Fig \ref{fig:concave_quad_bvd} with the horizontal line
+$\theta = \theta_0$, where $\theta_0 = \frac{\pi}{2}-0.6$ (we need to convert
+the angle from w.r.t the normal of the wall to w.r.t the forward direction of
+the robot). The horizontal line cut through different regions of the diagram,
+representing the possible edges that the robot can bounce to at different points
+on the boundary with bounce angle $\theta_0$. For example, at edge $v_5v_0$, the
+robot can bounce to edge $v_0v_1$ and $v_1v_2$. We can create a graph for
+$\theta = \theta_0$, whose nodes are edges in $P'$ and two nodes are connected
+by a directed edge if the robot can bounce from one edge to another at
+$\theta_0$, as shown in Fig \ref{fig:limit_cycle_diagram}. It is more stable
+for the robot to bounce to some edges than others. In the diagram
+(Fig \ref{fig:concave_quad_bvd}), the line $\theta = \theta_0$ cuts through
+four different regions for $x \in (2, 3)$, but the sections for $v_4v_5$ and
+$v_0v_5$ are much larger than those for $v_0v_1$ and $v_1v_2$. So we know it is
+more likely and more stable for the robot to bounce to edge $v_4v_5$ and
+$v_0v_5$. We marked the edge with unstable bounce in the graph with $\omega$ in
+Fig \ref{fig:limit_cycle_diagram}. The limit cycle shown in
+Fig \ref{fig:limit_cycle} corresponds to the cycle
+$v_0v_1\rightarrow v_3v_4\rightarrow v_4v_5 \rightarrow v_1v_2 \rightarrow v_2v_3 \rightarrow v_0v_5 \rightarrow v_0v_1$
+in Fig \ref{fig:limit_cycle_diagram}.
 
 \subsection{Localization}
 
-incorporate "Localization with Limited Sensing"
+We define the \emph{localization} task as:
 
+\begin{quotation}
+Given an accurate map of the environment, but no knowledge of configuration,
+determine a strategy which eliminates uncertainty in configuration as much as
+possible (ideally, to a point in configuration space).
+\end{quotation}
 
+In \cite{o2007localization}, the authors show that localization is possible with
+mobile robots with a linear and angular odometer, or a compass and contact
+sensor, but not with robots with only an angular odometer and contact sensor.
+These sensing configurations correspond to which types of bounce laws each robot
+is capable of performing, and we would like to be able to rederive the same
+results in this representation.
 
-\section{Toward a Hierarchy of Bouncing Robots}
-
-
+Localization amounts to a path finding algorithm in the larger graph, where each
+node is an element of the powerset of segments along $P'$. Future work will
+include how to tractibly search this graph (such as heuristics for doing so
+which take advantage of the uncertainty-reducing properties of contraction
+mappings).
 
 
 \section{Open Questions and Future Work}
 
-randomized plans?
+Future work also includes:
 
-\section{Conclusion}
+\begin{itemize}
+\item Characterizing the completeness and correctness of algorithms for
+navigation, coverage, localization, etc.
+\item Continue to place this work in context, especially with BitBots, Gap
+Navigation Trees, and Combinatorial Visibility Vectors
+\item Developing ways to query two $G_{BVD}$s, generated with different constraints on
+ bouncing laws and sensors, and determine whether one represents a robot which
+is ``more powerful" than another. Perhaps this will require a clever
+parameterization of bouncing laws.
+\item Investigate how to generate bounce law distributions that allow a bounce
+to be randomly selected at each stage and guarantee some properties about the
+resulting trajectory
+\item Extending analysis to more tasks, such as coverage and pursuit-evasion
+\end{itemize}
 
 
 
