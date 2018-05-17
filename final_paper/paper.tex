@@ -194,7 +194,7 @@ The link diagram, as introduced in \cite{tan_sweep}, displays the link distance 
     \centering
 \end{figure}
 
-\section{Bounce Visibility Diagram}
+\section{Bounce Visibility Diagram \label{bvd_def}}
 We will now define the central structure for this paper, the
 \textit{Bounce Visibility Diagram} for polygon $P$. We will first insert all new
 vertices from the partial local sequence for all vertices into the
@@ -354,8 +354,21 @@ We might hope that if $r$ is large, then not all of the reflex vertices will pro
 \label{fig:chestnut}}
 \end{figure}
 
-Let $n = 4t+2$, where $t$ is a positive integer. We design a polygon with $r = 2t$ reflex vertices. The polygon is symmetric with respect to its medium horizontal line. In the top half, the reflex vertices are uniformly located on a circle and thus they are visible to each other; the convex vertices are chosen so that they are outside the circle and the line through an edge will not intersect other edges. Each reflex vertices will have at least $t-1$ new vertices in its partial local sequence. All vertices in the top half can see each vertex in the bottom half and vice versa. So there will be $2t(t-1)+n$ vertices in the polygon after we insert all new vertices in the partial local sequence for all reflex vertices. Each of them can see at least $t(t-1)+n/2$ other vertices. The final complexity for the bounce visibility diagram is $\Theta ((2t(t-1)+n)(t(t-1)+n/2)) = \Theta (t^4) = \Theta(n^4)$. Fig~\ref{fig:chestnut} shows the polygons for $t = 4$ and $t=6$ with all the vertices in the partial local sequences.
-% show the diagram to edge 
+Let $n = 4t+2$, where $t$ is a positive integer. We design a polygon with
+$r = 2t$ reflex vertices. The polygon is symmetric with respect to its medium
+horizontal line. In the top half, the reflex vertices are uniformly located on a
+circle and thus they are visible to each other; the convex vertices are chosen
+so that they are outside the circle and the line through an edge will not
+intersect other edges. Each reflex vertices will have at least $t-1$ new
+vertices in its partial local sequence. All vertices in the top half can see
+each vertex in the bottom half and vice versa. So there will be $2t(t-1)+n$
+vertices in the polygon after we insert all new vertices in the partial local
+sequence for all reflex vertices. Each of them can see at least $t(t-1)+n/2$
+other vertices. The final complexity for the bounce visibility diagram is
+$\Theta ((2t(t-1)+n)(t(t-1)+n/2)) = \Theta (t^4) = \Theta(n^4)$.
+Fig \ref{fig:chestnut} shows the polygons for $t = 4$ and $t=6$ with all the
+vertices in the partial local sequences. % show the diagram to edge
+
 % show the fix bounce
 % show the periodic behavior
 % show the gap navigation
@@ -365,6 +378,76 @@ Let $n = 4t+2$, where $t$ is a positive integer. We design a polygon with $r = 2
 
 
 \section{BVD as an Information Space}
+
+Information spaces \cite{tovar2005information} are a useful formalism for
+reasoning about the information available to a robot as a result of its sensor
+and action history. From the \emph{history information space} (the space of all
+sensor/action histories), we can define mappings to other, more useful spaces.
+
+Here we will show that the bounce visibility diagram can induce a useful
+information space for many mobile robot tasks, and can be augmented with
+information from the geometric properties of actuators and sensors.
+
+We will construct $G_{BVD}$, a graph where nodes are segments in the decomposed
+environment $P'$ constructed in Section \ref{bvd_def}.
+
+We then define edges in this graph to be transitions between these segments, based on the bounce laws and
+required to transition between them. First, we observe that any two segments in
+$P'$ that are visible at all are visible along their entire lengths. Thus, we
+there exists a function $f$ which maps a point $s \in v_i
+v_{i+1}$ to a point $f(s) \in v_j v_{j+1}$ under a bounce at angle $\theta$ from
+the normal on edge $v_i v_{i+1}$, for all valid ranges of $s$, $f(s)$, and
+$\theta$.
+
+Rather than use $f$ directly, we take a nondeterministic approach and define a
+directed transition between edges $v_i v_{i+1}$ and $v_j v_{j+1}$ if it is
+possible to reach edge $v_j v_{j+1}$ from edge $v_i v_{i+1}$ under any bounce.
+We label the edge with the range of bounce angles, $\theta_{min} < \theta <
+\theta_{max}$, under which this is possible. See Figure \ref{fig:bounce_range} for
+the geometric definitions of $\theta_{max}$ and $\theta_{min}$.
+
+\begin{figure}
+    \includegraphics[width=0.8\linewidth]{images/bouncerange.png}
+    \centering
+    \caption{Definitions of $\theta_{max}$ and $\theta_{min}$. Can be computed
+by rotating the source edge to the x axis without loss of generality.}\label{fig:bounce_range}
+    \centering
+\end{figure}
+
+We can also add information to the edges in $G_{BVD}$ indicating whether the
+mapping from one edge to another is a \emph{contraction mapping}: a transition
+which will bring two separate points in the domain closer together in the range,
+a useful property for reducing state uncertainty and engineering limit cycles,
+as will be discussed in Section \ref{patrol}.
+
+The necessary condition for $f$ to be a contraction mapping is:
+
+\begin{equation*}
+|f(x) - f(y)| \leq c |x-y|
+\end{equation*}
+
+such that $0 \leq c < 1$.
+
+From Figure \ref{fig:cont_map}, we can see that
+
+\begin{equation*}
+|f(x) - f(y)| = \frac{\sin(\theta - \phi)}{\sin(\pi-\theta)} |x-y|
+\end{equation*}
+
+from the law of sines, where $\phi$ is the angle between the two edges if they
+are extended to their intersection point. If the edges are parallel, a
+contraction map is not possible (points will maintain their distance, not shrink
+closer together). Thus, whenever $\frac{\sin(\theta - \phi)}{\sin(\pi-\theta)}
+< 1$, $f$ is a contraction map, and the edge from $v_i v_{i+1}$ to $v_j
+v_{j+1}$ can be labelled as such, with the range of $\theta$ which makes this
+condition true.
+
+\begin{figure}
+    \includegraphics[width=0.8\linewidth]{images/contraction_map_cond.png}
+    \centering
+    \caption{\label{fig:cont_map}}
+    \centering
+\end{figure}
 
 \subsection{Augmenting the Diagram with Dynamical Information}
 
@@ -385,11 +468,13 @@ environment allows us to now reason over trajectories through a graph.
 
 Here, we define the \emph{navigation} task as:
 
+\begin{quotation}
 Given an environment $P$, a start set of possible robot positions along the
 environment boundary $S$, and a goal set $G$, determine a strategy $\pi$ which
 will be guaranteed to take the robot from any point in $S$ to a point in $G$.
+\end{quotation}
 
-If the start set $S$ is such that it lies entirely within one of the equivalence
+If the start set $S$ is such that it is equal to one of the equivalence
 classes of the data structure, a navigation query is simple - the start set in
 the graph is a single node, and the query is solved by a shortest path from this
 node to the nodes representing the goal set. The shortest path will correspond
@@ -403,15 +488,15 @@ of switches between bounce angles (especially useful for a robot which changes
 its bounce angle mechanically).
 
 If the start set $S$ lies in more than node of the graph, things get a bit
-trickier.
+trickier. We need to guarantee all-path reachability for a set of start nodes in
+a graph. There are also complications if the user-specified start set does not
+exactly overlap the equivalence classes formed by the decomposition in Section
+\ref{bvd_def}. For now, we can only guarantee navigation from one equivalence
+class (segment along the new polygon $P'$) to another.
 
 
-Their approach can be replicated with the current work by the following
-procedure: take the {\color{red}NAME} graph, and remove edges which represent unsafe actions.
-Also need to add a corner finding strategy (how do we know when we've found the
-corner?). 
 
-\subsection{Patrolling}
+\subsection{Patrolling \label{patrol}}
 
 In prior work {\color{red} cite}, it was shown that stable limit cycles exist for fixed bouncing in regular polygons, for some ranges of bounce angles. These results also hold for convex polygons in general.
 
